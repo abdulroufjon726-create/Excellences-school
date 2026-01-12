@@ -1,8 +1,21 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
+import Home from "@/components/Home.vue";
+import Register from "@/components/Register.vue";
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [],
-})
+const routes = [
+  {
+    path: "/",
+    component: Home,
+    children: [
+      {
+        path: "register",
+        component: Register,
+      },
+    ],
+  },
+];
 
-export default router
+export default createRouter({
+  history: createWebHistory(),
+  routes,
+});
