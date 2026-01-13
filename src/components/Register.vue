@@ -3,47 +3,60 @@ import { ref } from "vue";
 
 const inputs = ref([
   { type: "text", placeholder: "Enter Your Name" },
-  { type: "SourName", placeholder: "Enter Your SourName" },
-  { type: "number", placeholder: "+998 ** *** ** **" },
+  { type: "text", placeholder: "Enter Your Surname" },
+  { type: "tel", placeholder: "+998 __ ___ __ __" },
 ]);
 
-let curses = ref([
-  { name: "𝐈𝐍𝐆𝐋𝐈𝐙 𝐓𝐈𝐋𝐈-𝐈𝐄𝐋𝐓𝐒" },
-  { name: "𝐑𝐮𝐬 𝐓𝐢𝐥𝐢" },
-  { name: "𝐀𝐫𝐚𝐛 𝐓𝐢𝐥𝐢" },
-  { name: "𝐌𝐚𝐭𝐞𝐦𝐚𝐭𝐢𝐤𝐚" },
+const courses = ref([
+  { id: 1, name: "𝐈𝐍𝐆𝐋𝐈𝐙 𝐓𝐈𝐋𝐈 - 𝐈𝐄𝐋𝐓𝐒" },
+  { id: 2, name: "𝐑𝐮𝐬 𝐓𝐢𝐥𝐢" },
+  { id: 3, name: "𝐀𝐫𝐚𝐛 𝐓𝐢𝐥𝐢" },
+  { id: 4, name: "𝐌𝐚𝐭𝐞𝐦𝐚𝐭𝐢𝐤𝐚" },
 ]);
 </script>
 
 <template>
-  <div class="flex justify-center items-center gap-20 py-34" id="register">
+  <div
+    id="register"
+    class="flex flex-col md:flex-row justify-center items-center gap-10 py-24"
+  >
     <div>
       <img
         src="https://cdn-icons-png.flaticon.com/512/3687/3687192.png"
         alt="Register"
-        class="w-90"
+        class="hidden md:block w-[360px]"
       />
     </div>
 
-    <div class="flex flex-col gap-4 w-1/4">
+    <div class="flex flex-col gap-4 w-full md:w-1/4 px-4">
+      <div class="">
+        <p class="text-3xl font-semibold mb-4 animate-pulse text-blue-700">
+          Sign Up
+        </p>
+      </div>
       <input
         v-for="(item, i) in inputs"
         :key="i"
         :type="item.type"
         :placeholder="item.placeholder"
-        class="border border-gray-700 rounded px-3 py-2 outline-none focus:border-blue-700 transition"
+        class="border border-gray-600 rounded px-3 py-2 outline-none focus:border-blue-600 transition"
       />
 
-      <div class="grid grid-cols-2 gap-4">
-        <span v-for="item in curses" :key="item.id" class="flex items-center text-sm gap-2">
-          <input type="checkbox" name="" id="" />
-          <p>{{ item.name }}</p>
-        </span>
+      <div class="grid grid-cols-2 gap-3">
+        <label
+          v-for="item in courses"
+          :key="item.id"
+          :for="item.id"
+          class="flex items-center gap-2 text-sm cursor-pointer"
+        >
+          <input type="checkbox" :id="item.id" />
+          <span>{{ item.name }}</span>
+        </label>
       </div>
 
       <button
         type="submit"
-        class="text-xs sm:text-sm bg-blue-400 hover:bg-blue-700 transition-colors px-5 py-1.5 sm:px-6 sm:py-2 rounded-2xl cursor-pointer animate-pulse w-full text-white"
+        class="bg-blue-500 hover:bg-blue-700 transition-colors px-6 py-2 rounded-2xl w-full text-white text-sm"
       >
         Sign Up
       </button>

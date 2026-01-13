@@ -1,47 +1,81 @@
 <script setup>
+import { ref } from "vue";
+import { RouterLink } from "vue-router";
 import logo from "@/assets/images/logo.jpg";
 import bgimg from "@/assets/images/Rectangle 168.svg";
-import { RouterLink } from "vue-router";
+
+const isOpen = ref(false);
 
 const scrollTo = (id) => {
   const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({ behavior: "smooth" });
-  }
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+  isOpen.value = false;
 };
 </script>
 
 <template>
   <div class="pt-2 font-mono">
-    <nav class="flex justify-between items-center px-6">
+    <nav class="flex justify-between items-center px-6 py-4 relative">
       <div>
         <img
           :src="logo"
-          alt=""
-          class="w-14 h-14 rounded-full shadow-2xl shadow-black animate-spin"
+          alt="Logo"
+          class="w-12 h-12 rounded-full shadow-lg animate-spin"
           style="animation-duration: 10s"
         />
       </div>
-      <div>
-        <ul class="flex items-center gap-5">
-          <RouterLink to="/">
-            <li
-              class="md:text-[12px] text-blue-400 hover:text-blue-700 transition-colors cursor-pointer"
-            >
-              Home
-            </li>
-          </RouterLink>
+
+      <ul class="hidden md:flex items-center gap-6">
+        <RouterLink to="/">
           <li
-            class="text-xs text-blue-400 hover:text-blue-700 transition-colors cursor-pointer"
+            class="text-sm text-blue-400 hover:text-blue-700 transition cursor-pointer"
+          >
+            Home
+          </li>
+        </RouterLink>
+
+        <li
+          class="text-sm text-blue-400 hover:text-blue-700 transition cursor-pointer"
+          @click="scrollTo('How It Works?')"
+        >
+          How It Works?
+        </li>
+
+        <RouterLink to="/Register" @click="scrollTo('register')">
+          <li
+            class="text-sm text-white bg-blue-400 hover:bg-blue-700 transition px-3 py-1 rounded-2xl"
+          >
+            Register now
+          </li>
+        </RouterLink>
+      </ul>
+
+      <button class="md:hidden text-blue-500" @click="isOpen = !isOpen">
+        ☰
+      </button>
+
+      <div
+        v-if="isOpen"
+        class="absolute top-full left-0 w-full bg-white shadow-lg md:hidden z-20"
+      >
+        <ul class="flex flex-col items-center gap-4 py-4">
+          <RouterLink to="/" @click="isOpen = false">
+            <li class="text-blue-400 hover:text-blue-700">Home</li>
+          </RouterLink>
+
+          <li
+            class="text-blue-400 hover:text-blue-700 cursor-pointer"
             @click="scrollTo('How It Works?')"
           >
             How It Works?
           </li>
+
           <RouterLink to="/Register" @click="scrollTo('register')">
-            <p
-              class="md:text-[12px] text-slate-50 bg-blue-400 hover:bg-blue-700 transition-colors cursor-pointer px-2 py-1 rounded-2xl">
+            <li
+              class="text-white bg-blue-400 hover:bg-blue-700 px-4 py-1 rounded-2xl"
+            >
               Register now
-            </p>
+            </li>
           </RouterLink>
         </ul>
       </div>
@@ -68,6 +102,7 @@ const scrollTo = (id) => {
 
           <li>
             <button
+              @click="scrollTo('support')"
               class="text-xs sm:text-sm bg-blue-400 hover:bg-blue-700 transition-colors px-5 py-1.5 sm:px-6 sm:py-2 rounded-2xl cursor-pointer animate-pulse"
             >
               Join Now
