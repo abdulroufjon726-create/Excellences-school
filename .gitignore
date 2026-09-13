@@ -34,3 +34,9 @@ coverage
 
 # Vitest
 __screenshots__/
+
+# Freebuff (AI agent artifacts)
+.freebuff/
+
+# Eski nusxa (ichma-ich git repo)
+/Excellence_school/
