@@ -16,6 +16,8 @@ export interface ApiResult<T = unknown> {
   ok: boolean;
   data?: T;
   error?: string;
+  /** HTTP holat kodi (xato bo'lganda) — masalan captcha xatosini aniqlash */
+  status?: number;
 }
 
 /** API so'rovini yuboradi va yagona formatda natija qaytaradi. */
@@ -42,7 +44,7 @@ export async function apiPost<T = unknown>(
         (data.error as string) ||
         (data.detail as string) ||
         `Server xatosi (${res.status})`;
-      return { ok: false, error: msg };
+      return { ok: false, error: msg, status: res.status };
     }
     return { ok: true, data: data as T };
   } catch {
