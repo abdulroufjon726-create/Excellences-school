@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Loader2,
   PartyPopper,
+  RotateCcw,
   Send,
   ShieldCheck,
 } from "lucide-vue-next";
@@ -18,6 +19,7 @@ import {
   SITE_SOURCE,
 } from "@/api/client";
 import { awarenessKeys, studiedKeys, useI18n } from "@/i18n";
+import { BRAND_NAME } from "@/brand";
 
 const { t, locale } = useI18n();
 
@@ -142,7 +144,7 @@ function onPhoneInput(e: Event) {
         <div class="flex items-center gap-3">
           <LangSwitcher />
           <span class="font-display text-lg font-bold text-white">
-            Excellence<span class="text-brand-400">.</span>
+            {{ BRAND_NAME }}<span class="text-brand-400">.</span>
           </span>
         </div>
       </div>
@@ -336,27 +338,40 @@ function onPhoneInput(e: Event) {
                 </div>
 
                 <div>
-                  <label for="reg-captcha" class="mb-0.5 block text-xs font-bold text-ink-900">
-                    Tekshiruv: {{ captcha.question || "..." }}
-                  </label>
-                  <div class="flex gap-2">
-                    <input
-                      id="reg-captcha"
-                      v-model="captchaAnswer"
-                      type="text"
-                      inputmode="numeric"
-                      autocomplete="off"
-                      placeholder="Javob"
-                      class="w-24 rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2 text-ink-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15"
-                    />
-                    <button
-                      type="button"
-                      class="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-500 transition hover:border-brand-300"
-                      title="Boshqa savol"
-                      @click="refreshCaptcha"
-                    >
-                      ⟳
-                    </button>
+                  <div class="flex items-center justify-between gap-2 rounded-xl border border-brand-100 bg-gradient-to-r from-brand-50 to-white px-3 py-2.5">
+                    <div class="flex items-center gap-2.5">
+                      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-500/10 text-brand-600">
+                        <ShieldCheck class="h-4.5 w-4.5" />
+                      </span>
+                      <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wide text-brand-500">Inson ekanligingizni tasdiqlang</p>
+                        <p class="font-mono text-lg font-bold leading-tight text-ink-900 select-none">
+                          {{ captcha.question || "..." }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <input
+                        id="reg-captcha"
+                        v-model="captchaAnswer"
+                        type="text"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        placeholder="?"
+                        aria-label="Tekshiruv javobi"
+                        class="w-16 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-center font-mono text-base font-bold text-ink-900 outline-none transition placeholder:text-slate-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15"
+                      />
+                      <button
+                        type="button"
+                        class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:border-brand-300 hover:text-brand-500"
+                        title="Boshqa savol"
+                        aria-label="Boshqa savol"
+                        @click="refreshCaptcha"
+                      >
+                        <Loader2 v-if="submitting" class="h-4 w-4 animate-spin" />
+                        <RotateCcw v-else class="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                   <p v-if="captchaError" class="mt-1 text-xs font-semibold text-red-500">
                     {{ captchaError }}

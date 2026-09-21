@@ -16,6 +16,7 @@ import LangSwitcher from "@/components/LangSwitcher.vue";
 import { useI18n } from "@/i18n";
 import logo from "@/assets/images/logo.jpg";
 import bgimg from "@/assets/images/hero-bg.jpg";
+import { BRAND_NAME, BRAND_LOGO } from "@/brand";
 
 const isOpen = ref(false);
 const scrolled = ref(false);
@@ -60,12 +61,12 @@ const scrollTo = (id: string) => {
       <div class="mx-auto flex max-w-7xl items-center justify-between gap-3 px-5 py-3.5 sm:px-8">
         <RouterLink to="/" class="group flex items-center gap-3">
           <img
-            :src="logo"
+            :src="BRAND_LOGO"
             alt="Excellence School"
             class="h-11 w-11 rounded-full border border-white/25 shadow-lg shadow-brand-950/40 transition-transform duration-500 group-hover:rotate-12"
           />
           <span class="font-display text-lg font-bold tracking-tight text-white">
-            Excellence<span class="text-brand-400">.</span>
+            {{ BRAND_NAME }}<span class="text-brand-400">.</span>
           </span>
         </RouterLink>
 

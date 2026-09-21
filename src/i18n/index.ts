@@ -1,4 +1,5 @@
 import { computed, ref } from "vue";
+import { BRAND_NAME, BRAND_NAME_FULL } from "@/brand";
 
 export type Locale = "uz" | "en" | "ru";
 
@@ -146,7 +147,7 @@ const uz: Messages = {
     titleAccent: "bugundan",
     titlePost: "quramiz",
     subtitle:
-      "Excellence School — Ingliz tili (IELTS), Rus tili, Arab tili va Matematika kurslari. Tajribali ustozlar, zamonaviy metodika va har bir o'quvchiga individual yondashuv.",
+      `${BRAND_NAME_FULL} — Ingliz tili (IELTS), Rus tili, Arab tili va Matematika kurslari. Tajribali ustozlar, zamonaviy metodika va har bir o'quvchiga individual yondashuv.`,
     cta: "Hoziroq yozilish",
     secondary: "Qanday ishlaydi",
     stats: [
@@ -250,7 +251,7 @@ const uz: Messages = {
     awarenessTitle: "Bizni qayerdan bilib oldingiz?",
     awareness: ["Instagram", "Telegram", "Do'stlarimdan", "Reklamadan", "Boshqa"],
     studiedTitle: "Oldin o'qiganmisiz?",
-    studied: ["Yo'q, birinchi marta", "Ha, boshqa markazda", "Ha, Excellence'da"],
+    studied: ["Yo'q, birinchi marta", "Ha, boshqa markazda", `Ha, ${BRAND_NAME}'da`],
     submit: "Ro'yxatdan o'tish",
     submitting: "Yuborilmoqda…",
     privacy: "Ma'lumotlaringiz faqat siz bilan bog'lanish uchun ishlatiladi.",
@@ -270,7 +271,7 @@ const uz: Messages = {
   },
   footer: {
     about:
-      "Excellence School — zamonaviy o'quv markazi. Ingliz (IELTS), Rus va Arab tillari hamda Matematika kurslari. Maqsadingizga yo'l ochib beramiz.",
+      `${BRAND_NAME_FULL} — zamonaviy o'quv markazi. Ingliz (IELTS), Rus va Arab tillari hamda Matematika kurslari. Maqsadingizga yo'l ochib beramiz.`,
     pages: "Sahifalar",
     pageHome: "Bosh sahifa",
     pageHow: "Qanday ishlaydi",
@@ -299,7 +300,7 @@ const ru: Messages = {
     titleAccent: "строим",
     titlePost: "уже сегодня",
     subtitle:
-      "Excellence School — курсы английского (IELTS), русского, арабского языков и математики. Опытные преподаватели, современная методика и индивидуальный подход к каждому ученику.",
+      `${BRAND_NAME_FULL} — курсы английского (IELTS), русского, арабского языков и математики. Опытные преподаватели, современная методика и индивидуальный подход к каждому ученику.`,
     cta: "Записаться сейчас",
     secondary: "Как это работает",
     stats: [
@@ -403,7 +404,7 @@ const ru: Messages = {
     awarenessTitle: "Откуда вы узнали о нас?",
     awareness: ["Instagram", "Telegram", "От друзей", "Из рекламы", "Другое"],
     studiedTitle: "Вы уже где-то учились?",
-    studied: ["Нет, впервые", "Да, в другом центре", "Да, в Excellence"],
+    studied: ["Нет, впервые", "Да, в другом центре", `Да, в ${BRAND_NAME}`],
     submit: "Записаться",
     submitting: "Отправляется…",
     privacy: "Ваши данные используются только для связи с вами.",
@@ -422,7 +423,7 @@ const ru: Messages = {
   },
   footer: {
     about:
-      "Excellence School — современный учебный центр. Курсы английского (IELTS), русского и арабского языков, а также математики. Помогаем вам идти к своей цели.",
+      `${BRAND_NAME_FULL} — современный учебный центр. Курсы английского (IELTS), русского и арабского языков, а также математики. Помогаем вам идти к своей цели.`,
     pages: "Страницы",
     pageHome: "Главная",
     pageHow: "Как это работает",
@@ -451,7 +452,7 @@ const en: Messages = {
     titleAccent: "starting",
     titlePost: "today",
     subtitle:
-      "Excellence School — English (IELTS), Russian, Arabic and Mathematics courses. Experienced teachers, modern methods and an individual approach to every student.",
+      `${BRAND_NAME_FULL} — English (IELTS), Russian, Arabic and Mathematics courses. Experienced teachers, modern methods and an individual approach to every student.`,
     cta: "Enroll now",
     secondary: "How it works",
     stats: [
@@ -554,7 +555,7 @@ const en: Messages = {
     awarenessTitle: "How did you hear about us?",
     awareness: ["Instagram", "Telegram", "From friends", "From an ad", "Other"],
     studiedTitle: "Have you studied before?",
-    studied: ["No, it's my first time", "Yes, at another center", "Yes, at Excellence"],
+    studied: ["No, it's my first time", "Yes, at another center", `Yes, at ${BRAND_NAME}`],
     submit: "Sign up",
     submitting: "Sending…",
     privacy: "Your details are used only to contact you.",
@@ -572,7 +573,7 @@ const en: Messages = {
   },
   footer: {
     about:
-      "Excellence School is a modern learning center offering English (IELTS), Russian, Arabic and Mathematics courses. We help you move toward your goal.",
+      `${BRAND_NAME_FULL} is a modern learning center offering English (IELTS), Russian, Arabic and Mathematics courses. We help you move toward your goal.`,
     pages: "Pages",
     pageHome: "Home",
     pageHow: "How it works",

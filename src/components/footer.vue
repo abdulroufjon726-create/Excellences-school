@@ -2,6 +2,7 @@
 import { ArrowUp, MapPin, Phone } from "lucide-vue-next";
 import { useI18n } from "@/i18n";
 import logo from "@/assets/images/logo.jpg";
+import { BRAND_NAME, BRAND_NAME_FULL, BRAND_LOGO } from "@/brand";
 
 const { t } = useI18n();
 const year = new Date().getFullYear();
@@ -22,12 +23,12 @@ const scrollTo = (id: string) => {
         <div>
           <div class="flex items-center gap-3">
             <img
-              :src="logo"
+              :src="BRAND_LOGO"
               alt="Excellence School"
               class="h-12 w-12 rounded-full border border-white/15 shadow-lg"
             />
             <span class="font-display text-xl font-bold text-white">
-              Excellence<span class="text-brand-400">.</span>
+              {{ BRAND_NAME }}<span class="text-brand-400">.</span>
             </span>
           </div>
           <p class="mt-5 max-w-sm text-sm leading-relaxed">
@@ -96,7 +97,7 @@ const scrollTo = (id: string) => {
       </div>
 
       <div class="mt-14 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-7 text-xs sm:flex-row">
-        <p>© {{ year }} Excellence School. {{ t.footer.rights }}</p>
+        <p>© {{ year }} {{ BRAND_NAME_FULL }}. {{ t.footer.rights }}</p>
         <p class="text-slate-500">{{ t.footer.slogan }}</p>
       </div>
     </div>
