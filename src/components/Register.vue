@@ -14,6 +14,8 @@ import LangSwitcher from "@/components/LangSwitcher.vue";
 import {
   API_BASE_URL,
   apiPost,
+  captchaErrorText,
+  deviceExtra,
   formatUzPhone,
   isValidUzPhone,
   SITE_SOURCE,
@@ -83,7 +85,7 @@ async function submit() {
   }
 
   if (!captchaAnswer.value || !captcha.value.id) {
-    errorMsg.value = "Tekshiruv savoliga javob bering (men robot emasman)";
+    errorMsg.value = t.value.errors.captchaMissing;
     return;
   }
 
@@ -103,6 +105,7 @@ async function submit() {
       `Oldin o'qigan: ${studiedLabel}`,
     ].join(" | "),
     source: `${SITE_SOURCE}:${locale.value}`,
+    device_extra: deviceExtra(),
     captcha_id: captcha.value.id,
     captcha_answer: captchaAnswer.value,
   });
@@ -111,7 +114,7 @@ async function submit() {
   if (res.ok) {
     success.value = true;
   } else {
-    errorMsg.value = res.error ?? t.value.errors.generic;
+    errorMsg.value = captchaErrorText(res, (k) => t.value[k as never]) ?? t.value.errors.generic;
     // Captcha bir martalik — xato bo'lsa-yoki muvaffaqiyatli bo'lsa ham yangilash kerak
     if (res.status === 400) refreshCaptcha();
   }
@@ -344,7 +347,7 @@ function onPhoneInput(e: Event) {
                         <ShieldCheck class="h-4.5 w-4.5" />
                       </span>
                       <div>
-                        <p class="text-[10px] font-bold uppercase tracking-wide text-brand-500">Inson ekanligingizni tasdiqlang</p>
+                        <p class="text-[10px] font-bold uppercase tracking-wide text-brand-500">{{ t.register.captchaTitle }}</p>
                         <p class="font-mono text-lg font-bold leading-tight text-ink-900 select-none">
                           {{ captcha.question || "..." }}
                         </p>
@@ -358,14 +361,14 @@ function onPhoneInput(e: Event) {
                         inputmode="numeric"
                         autocomplete="off"
                         placeholder="?"
-                        aria-label="Tekshiruv javobi"
+                        :aria-label="t.register.captchaAnswerLabel"
                         class="w-16 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-center font-mono text-base font-bold text-ink-900 outline-none transition placeholder:text-slate-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15"
                       />
                       <button
                         type="button"
                         class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:border-brand-300 hover:text-brand-500"
-                        title="Boshqa savol"
-                        aria-label="Boshqa savol"
+                        :title="t.register.captchaRefresh"
+                        :aria-label="t.register.captchaRefresh"
                         @click="refreshCaptcha"
                       >
                         <Loader2 v-if="submitting" class="h-4 w-4 animate-spin" />

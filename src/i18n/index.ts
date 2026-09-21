@@ -110,12 +110,20 @@ export interface Messages {
     successText: string;
     backHome: string;
     errorFields: string;
+    captchaTitle: string;
+    captchaAnswerLabel: string;
+    captchaRefresh: string;
   };
   errors: {
     shortName: string;
     phone: string;
     network: string;
     generic: string;
+    captchaMissing: string;
+    captchaUsed: string;
+    captchaExpired: string;
+    captchaTooFast: string;
+    captchaWrong: string;
   };
   footer: {
     about: string;
@@ -261,6 +269,9 @@ const uz: Messages = {
     backHome: "Bosh sahifaga qaytish",
     errorFields:
       "Iltimos, barcha maydonlarni to'ldiring va kamida bitta kursni tanlang.",
+    captchaTitle: "Inson ekanligingizni tasdiqlang",
+    captchaAnswerLabel: "Tekshiruv javobi",
+    captchaRefresh: "Boshqa savol",
   },
   errors: {
     shortName: "Iltimos, ismingizni to'liq kiriting.",
@@ -268,6 +279,11 @@ const uz: Messages = {
     network:
       "Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.",
     generic: "Xatolik yuz berdi. Qayta urinib ko'ring.",
+    captchaMissing: "Tekshiruv savoliga javob bering",
+    captchaUsed: "Tekshiruv allaqachon ishlatilgan — yangisini oling",
+    captchaExpired: "Tekshiruv muddati tugadi — yangisini oling",
+    captchaTooFast: "Juda tez yuborildi — biroz kutib qayta urinib ko'ring",
+    captchaWrong: "Tekshiruv javobi noto'g'ri — qayta urinib ko'ring",
   },
   footer: {
     about:
@@ -413,6 +429,9 @@ const ru: Messages = {
       "Заявка принята. Наши менеджеры скоро позвонят на номер {phone} и назначат пробный урок.",
     backHome: "Вернуться на главную",
     errorFields: "Пожалуйста, заполните все поля и выберите хотя бы один курс.",
+    captchaTitle: "Подтвердите, что вы не робот",
+    captchaAnswerLabel: "Ответ на проверку",
+    captchaRefresh: "Другой вопрос",
   },
   errors: {
     shortName: "Пожалуйста, введите имя полностью.",
@@ -420,6 +439,11 @@ const ru: Messages = {
     network:
       "Не удалось подключиться к серверу. Проверьте интернет и попробуйте снова.",
     generic: "Произошла ошибка. Попробуйте ещё раз.",
+    captchaMissing: "Ответьте на вопрос проверки",
+    captchaUsed: "Проверка уже использована — получите новую",
+    captchaExpired: "Срок проверки истёк — получите новую",
+    captchaTooFast: "Слишком быстро — подождите и попробуйте снова",
+    captchaWrong: "Неверный ответ — попробуйте ещё раз",
   },
   footer: {
     about:
@@ -564,12 +588,20 @@ const en: Messages = {
       "Your application has been received. Our managers will call you at {phone} shortly to schedule your trial lesson.",
     backHome: "Back to home page",
     errorFields: "Please fill in all the fields and pick at least one course.",
+    captchaTitle: "Confirm you're human",
+    captchaAnswerLabel: "Verification answer",
+    captchaRefresh: "New question",
   },
   errors: {
     shortName: "Please enter your full name.",
     phone: "Please enter the full phone number: +998 __ ___ __ __",
     network: "Could not reach the server. Check your connection and try again.",
     generic: "Something went wrong. Please try again.",
+    captchaMissing: "Please answer the verification question",
+    captchaUsed: "Verification already used — get a new one",
+    captchaExpired: "Verification expired — get a new one",
+    captchaTooFast: "Too fast — wait a moment and try again",
+    captchaWrong: "Wrong answer — please try again",
   },
   footer: {
     about:

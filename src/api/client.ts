@@ -18,6 +18,8 @@ export interface ApiResult<T = unknown> {
   error?: string;
   /** HTTP holat kodi (xato bo'lganda) — masalan captcha xatosini aniqlash */
   status?: number;
+  /** Captcha xato kodi (xato bo'lganda): missing/used/expired/too_fast/wrong */
+  captchaCode?: string;
 }
 
 /** API so'rovini yuboradi va yagona formatda natija qaytaradi. */
@@ -44,7 +46,12 @@ export async function apiPost<T = unknown>(
         (data.error as string) ||
         (data.detail as string) ||
         `Server xatosi (${res.status})`;
-      return { ok: false, error: msg, status: res.status };
+      return {
+        ok: false,
+        error: msg,
+        status: res.status,
+        captchaCode: (data.captcha_code as string) || undefined,
+      };
     }
     return { ok: true, data: data as T };
   } catch {
@@ -53,6 +60,38 @@ export async function apiPost<T = unknown>(
       error: "Serverga ulanib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.",
     };
   }
+}
+
+/** Qurilma qo'shimcha ma'lumoti: ekran · vaqt zonasi · til — lead bilan yuboriladi. */
+export function deviceExtra(): string {
+  if (typeof window === "undefined") return "";
+  const screen = `${window.screen.width}x${window.screen.height}`;
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+  const lang = navigator.language || "";
+  return [screen, tz, lang].filter(Boolean).join(" · ").slice(0, 100);
+}
+
+/**
+ * Captcha xato kodini foydalanuvchi tiliga o'giradi.
+ *
+ * Backend "captcha_code" qaytaradi (missing/used/expired/too_fast/wrong) —
+ * shu yerdan tilga mos xabar olinadi. Tarjima topilmasa undefined —
+ * chaqiruvchi o'zining standart xabarini ko'rsatadi.
+ */
+export function captchaErrorText(
+  res: ApiResult<unknown>,
+  t: (key: string) => string,
+): string | undefined {
+  if (!res.captchaCode) return undefined;
+  const map: Record<string, string> = {
+    missing: "errors.captchaMissing",
+    used: "errors.captchaUsed",
+    expired: "errors.captchaExpired",
+    too_fast: "errors.captchaTooFast",
+    wrong: "errors.captchaWrong",
+  };
+  const key = map[res.captchaCode];
+  return key ? t(key) : undefined;
 }
 
 /** '+998 90 123 45 67' → '901234567' (front tekshiruvi). */

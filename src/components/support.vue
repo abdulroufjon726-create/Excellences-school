@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
-import { CheckCircle2, Loader2, MessageSquareHeart, Send } from "lucide-vue-next";
+import { CheckCircle2, Loader2, MessageSquareHeart, RotateCcw, Send, ShieldCheck } from "lucide-vue-next";
 import {
   API_BASE_URL,
   apiPost,
+  captchaErrorText,
+  deviceExtra,
   formatUzPhone,
   isValidUzPhone,
   SITE_SOURCE,
@@ -60,7 +62,7 @@ async function submit() {
   }
 
   if (!captchaAnswer.value || !captcha.value.id) {
-    errorMsg.value = "Tekshiruv savoliga javob bering (men robot emasman)";
+    errorMsg.value = t.value.errors.captchaMissing;
     return;
   }
 
@@ -71,6 +73,7 @@ async function submit() {
     interest: "Need Support",
     note: form.message.trim(),
     source: `${SITE_SOURCE}:${locale.value}`,
+    device_extra: deviceExtra(),
     captcha_id: captcha.value.id,
     captcha_answer: captchaAnswer.value,
   });
@@ -79,7 +82,7 @@ async function submit() {
   if (res.ok) {
     success.value = true;
   } else {
-    errorMsg.value = res.error ?? t.value.errors.generic;
+    errorMsg.value = captchaErrorText(res, (k) => t.value[k as never]) ?? t.value.errors.generic;
     if (res.status === 400) refreshCaptcha();
   }
 }
@@ -225,27 +228,39 @@ function onPhoneInput(e: Event) {
                 </div>
 
                 <div>
-                  <label for="support-captcha" class="mb-1.5 block text-sm font-bold text-ink-900">
-                    Tekshiruv: {{ captcha.question || "..." }}
-                  </label>
-                  <div class="flex gap-2">
-                    <input
-                      id="support-captcha"
-                      v-model="captchaAnswer"
-                      type="text"
-                      inputmode="numeric"
-                      autocomplete="off"
-                      placeholder="Javob"
-                      class="w-28 rounded-xl border border-slate-300 bg-slate-50/50 px-4 py-3 text-ink-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15"
-                    />
-                    <button
-                      type="button"
-                      class="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-500 transition hover:border-brand-300"
-                      title="Boshqa savol"
-                      @click="refreshCaptcha"
-                    >
-                      ⟳
-                    </button>
+                  <div class="flex items-center justify-between gap-2 rounded-xl border border-brand-100 bg-gradient-to-r from-brand-50 to-white px-4 py-3">
+                    <div class="flex items-center gap-3">
+                      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-500/10 text-brand-600">
+                        <ShieldCheck class="h-5 w-5" />
+                      </span>
+                      <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wide text-brand-500">Inson ekanligingizni tasdiqlang</p>
+                        <p class="font-mono text-xl font-bold leading-tight text-ink-900 select-none">
+                          {{ captcha.question || "..." }}
+                        </p>
+                      </div>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                      <input
+                        id="support-captcha"
+                        v-model="captchaAnswer"
+                        type="text"
+                        inputmode="numeric"
+                        autocomplete="off"
+                        placeholder="?"
+                        aria-label="Tekshiruv javobi"
+                        class="w-20 rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-center font-mono text-lg font-bold text-ink-900 outline-none transition placeholder:text-slate-300 focus:border-brand-500 focus:ring-4 focus:ring-brand-500/15"
+                      />
+                      <button
+                        type="button"
+                        class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition hover:border-brand-300 hover:text-brand-500"
+                        title="Boshqa savol"
+                        aria-label="Boshqa savol"
+                        @click="refreshCaptcha"
+                      >
+                        <RotateCcw class="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
 
