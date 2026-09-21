@@ -2,6 +2,7 @@
 import { computed, reactive, ref } from "vue";
 import { CheckCircle2, Loader2, MessageSquareHeart, Send } from "lucide-vue-next";
 import {
+  API_BASE_URL,
   apiPost,
   formatUzPhone,
   isValidUzPhone,
@@ -21,6 +22,26 @@ const submitting = ref(false);
 const success = ref(false);
 const errorMsg = ref("");
 
+// "Men robot emasman" captcha
+const captcha = ref({ id: "", question: "" });
+const captchaAnswer = ref("");
+
+async function loadCaptcha() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/captcha/new/`);
+    if (res.ok) captcha.value = await res.json();
+  } catch {
+    // backend rad etadi — forma ochiq qoladi
+  }
+}
+
+function refreshCaptcha() {
+  captchaAnswer.value = "";
+  loadCaptcha();
+}
+
+loadCaptcha();
+
 const successText = computed(() =>
   t.value.support.successText.replace("{phone}", form.phone),
 );
@@ -38,6 +59,11 @@ async function submit() {
     return;
   }
 
+  if (!captchaAnswer.value || !captcha.value.id) {
+    errorMsg.value = "Tekshiruv savoliga javob bering (men robot emasman)";
+    return;
+  }
+
   submitting.value = true;
   const res = await apiPost<{ id: number }>("/api/site-lead/", {
     name: form.name.trim(),
@@ -45,6 +71,8 @@ async function submit() {
     interest: "Need Support",
     note: form.message.trim(),
     source: `${SITE_SOURCE}:${locale.value}`,
+    captcha_id: captcha.value.id,
+    captcha_answer: captchaAnswer.value,
   });
   submitting.value = false;
 
@@ -52,6 +80,7 @@ async function submit() {
     success.value = true;
   } else {
     errorMsg.value = res.error ?? t.value.errors.generic;
+    if (res.status === 400) refreshCaptcha();
   }
 }
 
@@ -190,6 +219,31 @@ function onPhoneInput(e: Event) {
                     :placeholder="t.support.messagePlaceholder"
                     class="w-full resize-none rounded-xl border border-slate-300 bg-slate-50/50 px-4 py-3 text-ink-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15"
                   />
+                </div>
+
+                <div>
+                  <label for="support-captcha" class="mb-1.5 block text-sm font-bold text-ink-900">
+                    Tekshiruv: {{ captcha.question || "..." }}
+                  </label>
+                  <div class="flex gap-2">
+                    <input
+                      id="support-captcha"
+                      v-model="captchaAnswer"
+                      type="text"
+                      inputmode="numeric"
+                      autocomplete="off"
+                      placeholder="Javob"
+                      class="w-28 rounded-xl border border-slate-300 bg-slate-50/50 px-4 py-3 text-ink-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15"
+                    />
+                    <button
+                      type="button"
+                      class="cursor-pointer rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-bold text-slate-500 transition hover:border-brand-300"
+                      title="Boshqa savol"
+                      @click="refreshCaptcha"
+                    >
+                      ⟳
+                    </button>
+                  </div>
                 </div>
 
                 <p

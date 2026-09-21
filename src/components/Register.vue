@@ -11,6 +11,7 @@ import {
 } from "lucide-vue-next";
 import LangSwitcher from "@/components/LangSwitcher.vue";
 import {
+  API_BASE_URL,
   apiPost,
   formatUzPhone,
   isValidUzPhone,
@@ -32,6 +33,28 @@ const form = reactive({
 const submitting = ref(false);
 const success = ref(false);
 const errorMsg = ref("");
+
+// "Men robot emasman" captcha — har bir yuborishdan oldin yangi savol
+const captcha = ref({ id: "", question: "" });
+const captchaAnswer = ref("");
+const captchaError = ref("");
+
+async function loadCaptcha() {
+  captchaError.value = "";
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/captcha/new/`);
+    if (res.ok) captcha.value = await res.json();
+  } catch {
+    // captcha yuklanmasa forma baribir ochiq qoladi — backend rad etadi
+  }
+}
+
+function refreshCaptcha() {
+  captchaAnswer.value = "";
+  loadCaptcha();
+}
+
+loadCaptcha();
 
 const phoneValid = computed(() => form.phone === "" || isValidUzPhone(form.phone));
 const canSubmit = computed(
@@ -57,6 +80,11 @@ async function submit() {
     return;
   }
 
+  if (!captchaAnswer.value || !captcha.value.id) {
+    errorMsg.value = "Tekshiruv savoliga javob bering (men robot emasman)";
+    return;
+  }
+
   submitting.value = true;
   const awareIndex = awarenessKeys.indexOf(form.awareOf as (typeof awarenessKeys)[number]);
   const awareLabel = (awareIndex >= 0 ? t.value.register.awareness[awareIndex] : undefined) ?? form.awareOf;
@@ -73,6 +101,8 @@ async function submit() {
       `Oldin o'qigan: ${studiedLabel}`,
     ].join(" | "),
     source: `${SITE_SOURCE}:${locale.value}`,
+    captcha_id: captcha.value.id,
+    captcha_answer: captchaAnswer.value,
   });
   submitting.value = false;
 
@@ -80,6 +110,8 @@ async function submit() {
     success.value = true;
   } else {
     errorMsg.value = res.error ?? t.value.errors.generic;
+    // Captcha bir martalik — xato bo'lsa-yoki muvaffaqiyatli bo'lsa ham yangilash kerak
+    if (res.status === 400) refreshCaptcha();
   }
 }
 
@@ -301,6 +333,34 @@ function onPhoneInput(e: Event) {
                       {{ label }}
                     </button>
                   </div>
+                </div>
+
+                <div>
+                  <label for="reg-captcha" class="mb-0.5 block text-xs font-bold text-ink-900">
+                    Tekshiruv: {{ captcha.question || "..." }}
+                  </label>
+                  <div class="flex gap-2">
+                    <input
+                      id="reg-captcha"
+                      v-model="captchaAnswer"
+                      type="text"
+                      inputmode="numeric"
+                      autocomplete="off"
+                      placeholder="Javob"
+                      class="w-24 rounded-xl border border-slate-300 bg-slate-50/50 px-3 py-2 text-ink-900 outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/15"
+                    />
+                    <button
+                      type="button"
+                      class="cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-500 transition hover:border-brand-300"
+                      title="Boshqa savol"
+                      @click="refreshCaptcha"
+                    >
+                      ⟳
+                    </button>
+                  </div>
+                  <p v-if="captchaError" class="mt-1 text-xs font-semibold text-red-500">
+                    {{ captchaError }}
+                  </p>
                 </div>
 
                 <p

@@ -40,3 +40,6 @@ __screenshots__/
 
 # Eski nusxa (ichma-ich git repo)
 /Excellence_school/
+
+.vercel
+.env*
