@@ -89,6 +89,9 @@ function resetForm() {
   form.name = "";
   form.phone = "";
   form.message = "";
+  // Eski captcha allaqachon ishlatilgan — yangisini olib kelmasak
+  // keyingi yuborish "captcha ishlatilgan" xatosi bilan rad etiladi
+  refreshCaptcha();
 }
 
 function onPhoneInput(e: Event) {
