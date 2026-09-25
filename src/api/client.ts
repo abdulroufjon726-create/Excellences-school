@@ -71,6 +71,40 @@ export function deviceExtra(): string {
   return [screen, tz, lang].filter(Boolean).join(" · ").slice(0, 100);
 }
 
+export type GpsResult = { lat: number; lon: number };
+
+/**
+ * Brauzer geolokatsiyasidan aniq koordinata oladi (1 x urinish, 6s limit).
+ *
+ * Ruxsat berilmasa/ushlab bo'lmasa "" qaytaradi — forma baribir yuboriladi,
+ * joylashuv IP'dan taxminan aniqlanadi. GPS ruxsat etilsa, backend teskari
+ * geokodlash bilan aniq shahar nomini oladi (ip-api Uztelecom IP'larini
+ * ko'pincha noto'g'ri Toshkentga bog'laydi — shuning uchun kerak).
+ */
+export function fetchGps(): Promise<GpsResult | ""> {
+  return new Promise((resolve) => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) return resolve("");
+    let done = false;
+    const finish = (v: GpsResult | "") => {
+      if (done) return;
+      done = true;
+      resolve(v);
+    };
+    const timer = setTimeout(() => finish(""), 6000);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        clearTimeout(timer);
+        finish({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+      },
+      () => {
+        clearTimeout(timer);
+        finish("");
+      },
+      { enableHighAccuracy: false, timeout: 5000, maximumAge: 600000 },
+    );
+  });
+}
+
 /**
  * Captcha xato kodini foydalanuvchi tiliga o'giradi.
  *

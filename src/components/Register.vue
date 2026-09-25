@@ -17,6 +17,7 @@ import {
   captchaErrorText,
   deviceExtra,
   formatUzPhone,
+  fetchGps,
   isValidUzPhone,
   SITE_SOURCE,
 } from "@/api/client";
@@ -95,6 +96,10 @@ async function submit() {
   const studiedIndex = studiedKeys.indexOf(form.studied as (typeof studiedKeys)[number]);
   const studiedLabel = (studiedIndex >= 0 ? t.value.register.studied[studiedIndex] : undefined) ?? form.studied;
 
+  // GPS ruxsat bergan bo'lsa aniq koordinata ham yuboriladi (backend
+  // teskari geokodlash bilan haqiqiy shaharni aniqlaydi); ruxsat
+  // berilmasa "" — IP taxmini bilan baribir yuboriladi
+  const gps = await fetchGps();
   const res = await apiPost<{ id: number }>("/api/site-lead/", {
     name: `${form.name.trim()} ${form.surname.trim()}`.trim(),
     phone: form.phone.trim(),
@@ -106,6 +111,7 @@ async function submit() {
     ].join(" | "),
     source: `${SITE_SOURCE}:${locale.value}`,
     device_extra: deviceExtra(),
+    ...(gps ? { gps_lat: gps.lat, gps_lon: gps.lon } : {}),
     captcha_id: captcha.value.id,
     captcha_answer: captchaAnswer.value,
   });

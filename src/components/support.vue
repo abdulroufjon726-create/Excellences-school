@@ -7,6 +7,7 @@ import {
   captchaErrorText,
   deviceExtra,
   formatUzPhone,
+  fetchGps,
   isValidUzPhone,
   SITE_SOURCE,
 } from "@/api/client";
@@ -67,6 +68,9 @@ async function submit() {
   }
 
   submitting.value = true;
+  // GPS ruxsat bergan bo'lsa aniq koordinata ham yuboriladi; ruxsat
+  // berilmasa "" — IP taxmini bilan baribir yuboriladi
+  const gps = await fetchGps();
   const res = await apiPost<{ id: number }>("/api/site-lead/", {
     name: form.name.trim(),
     phone: form.phone.trim(),
@@ -74,6 +78,7 @@ async function submit() {
     note: form.message.trim(),
     source: `${SITE_SOURCE}:${locale.value}`,
     device_extra: deviceExtra(),
+    ...(gps ? { gps_lat: gps.lat, gps_lon: gps.lon } : {}),
     captcha_id: captcha.value.id,
     captcha_answer: captchaAnswer.value,
   });
