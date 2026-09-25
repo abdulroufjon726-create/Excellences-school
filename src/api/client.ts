@@ -73,36 +73,65 @@ export function deviceExtra(): string {
 
 export type GpsResult = { lat: number; lon: number };
 
+// GPS holati: null = hali so'ralmagan, "denied" = foydalanuvchi rad etgan
+// (qayta so'ramaymiz), aks holda koordinata. Ruxsat oynasi sahifa
+// ochilishida BIR MARTA chiqadi — "Yuborish" bosilganda GPS allaqachon
+// tayyor bo'ladi va hech qanday so'rov chiqmaydi.
+let gpsCache: GpsResult | "denied" | null = null;
+let gpsInflight: Promise<GpsResult | ""> | null = null;
+
 /**
- * Brauzer geolokatsiyasidan aniq koordinata oladi (1 x urinish, 6s limit).
- *
- * Ruxsat berilmasa/ushlab bo'lmasa "" qaytaradi — forma baribir yuboriladi,
- * joylashuv IP'dan taxminan aniqlanadi. GPS ruxsat etilsa, backend teskari
- * geokodlash bilan aniq shahar nomini oladi (ip-api Uztelecom IP'larini
- * ko'pincha noto'g'ri Toshkentga bog'laydi — shuning uchun kerak).
+ * Erta GPS yig'uv: sahifa/forma ochilganida chaqiriladi — brauzer ruxsat
+ * oynasi shu paytda chiqadi va foydalanuvchi javob berguncha forma
+ * to'ldiriladi. Natija keshlanadi (warmGps + fetchGps bitta so'rov).
+ */
+export function warmGps(): void {
+  if (gpsCache === null && !gpsInflight) void fetchGps();
+}
+
+/**
+ * Keshlangan GPS koordinatani qaytaradi — submit paytida INSTANT ishlaydi,
+ * ruxsat oynasi HECH QACHON shu paytda chiqmaydi (erta warmGps chaqirilgan
+ * bo'lsa). Rad etilgan bo'lsa "" — forma baribir yuboriladi, joylashuv
+ * IP'dan taxminan aniqlanadi. Backend teskari geokodlash bilan aniq shahar
+ * nomini oladi (ip-api Uztelecom IP'larini noto'g'ri Toshkentga bog'laydi).
  */
 export function fetchGps(): Promise<GpsResult | ""> {
-  return new Promise((resolve) => {
-    if (typeof navigator === "undefined" || !navigator.geolocation) return resolve("");
+  if (gpsCache === "denied") return Promise.resolve("");
+  if (gpsCache) return Promise.resolve(gpsCache);
+  if (gpsInflight) return gpsInflight;
+  gpsInflight = new Promise<GpsResult | "">((resolve) => {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      gpsCache = "denied";
+      return resolve("");
+    }
     let done = false;
     const finish = (v: GpsResult | "") => {
       if (done) return;
       done = true;
+      gpsInflight = null;
       resolve(v);
     };
-    const timer = setTimeout(() => finish(""), 6000);
+    const timer = setTimeout(() => finish(""), 7000);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         clearTimeout(timer);
-        finish({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+        gpsCache = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        finish(gpsCache);
       },
-      () => {
+      (err) => {
         clearTimeout(timer);
+        // Rad etilsa abadiy keshlaymiz (qayta so'rab bezovta qilmaymiz);
+        // timeout/sharq muammosida keshlanmaydi — submit yana urinadi
+        if (err && err.code === (globalThis as { GeolocationPositionError?: { PERMISSION_DENIED?: number } }).GeolocationPositionError?.PERMISSION_DENIED) {
+          gpsCache = "denied";
+        }
         finish("");
       },
-      { enableHighAccuracy: false, timeout: 5000, maximumAge: 600000 },
+      { enableHighAccuracy: false, timeout: 6000, maximumAge: 600000 },
     );
   });
+  return gpsInflight;
 }
 
 /**

@@ -10,6 +10,7 @@ import {
   fetchGps,
   isValidUzPhone,
   SITE_SOURCE,
+  warmGps,
 } from "@/api/client";
 import { useI18n } from "@/i18n";
 
@@ -40,7 +41,11 @@ async function loadCaptcha() {
 
 function refreshCaptcha() {
   captchaAnswer.value = "";
-  loadCaptcha();
+  // Erta GPS: ruxsat oynasi sahifa ochilishida chiqadi — "Yuborish"
+// paytida GPS tayyor bo'ladi, qo'shimcha so'rov chiqmaydi
+warmGps();
+
+loadCaptcha();
 }
 
 loadCaptcha();
@@ -68,8 +73,7 @@ async function submit() {
   }
 
   submitting.value = true;
-  // GPS ruxsat bergan bo'lsa aniq koordinata ham yuboriladi; ruxsat
-  // berilmasa "" — IP taxmini bilan baribir yuboriladi
+  // warmGps() bilan erta so'ralgan GPS (keshlangan) — instant, oyna chiqmaydi
   const gps = await fetchGps();
   const res = await apiPost<{ id: number }>("/api/site-lead/", {
     name: form.name.trim(),

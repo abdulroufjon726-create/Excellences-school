@@ -20,6 +20,7 @@ import {
   fetchGps,
   isValidUzPhone,
   SITE_SOURCE,
+  warmGps,
 } from "@/api/client";
 import { awarenessKeys, studiedKeys, useI18n } from "@/i18n";
 import { BRAND_NAME } from "@/brand";
@@ -56,7 +57,11 @@ async function loadCaptcha() {
 
 function refreshCaptcha() {
   captchaAnswer.value = "";
-  loadCaptcha();
+  // Erta GPS: ruxsat oynasi sahifa ochilishida chiqadi — "Yuborish"
+// paytida GPS tayyor bo'ladi, qo'shimcha so'rov chiqmaydi
+warmGps();
+
+loadCaptcha();
 }
 
 loadCaptcha();
@@ -96,9 +101,7 @@ async function submit() {
   const studiedIndex = studiedKeys.indexOf(form.studied as (typeof studiedKeys)[number]);
   const studiedLabel = (studiedIndex >= 0 ? t.value.register.studied[studiedIndex] : undefined) ?? form.studied;
 
-  // GPS ruxsat bergan bo'lsa aniq koordinata ham yuboriladi (backend
-  // teskari geokodlash bilan haqiqiy shaharni aniqlaydi); ruxsat
-  // berilmasa "" — IP taxmini bilan baribir yuboriladi
+  // warmGps() bilan erta so'ralgan GPS (keshlangan) — instant, oyna chiqmaydi
   const gps = await fetchGps();
   const res = await apiPost<{ id: number }>("/api/site-lead/", {
     name: `${form.name.trim()} ${form.surname.trim()}`.trim(),
