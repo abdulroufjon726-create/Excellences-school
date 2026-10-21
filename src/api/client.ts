@@ -1,7 +1,15 @@
-/** CRM backend manzili: .env faylda VITE_API_BASE_URL beriladi, bo'lmasa lokal server. */
+/** CRM backend manzili: .env faylda VITE_API_BASE_URL beriladi.
+ *
+ * Zaxira qiymat muhitga qarab tanlanadi: dev server lokal backendga
+ * (127.0.0.1:8000), production build esa haqiqiy Render backendga
+ * ulanadi — Vercel'da env o'rnatilishi unutilgan bo'lsa ham sayt
+ * ishlaydi (avval "localhost" ga ketib, forma jim yiqilardi).
+ */
 export const API_BASE_URL =
   (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/+$/, "") ||
-  "http://127.0.0.1:8000";
+  (import.meta.env.DEV
+    ? "http://127.0.0.1:8000"
+    : "https://davomat-django-zbn4.onrender.com");
 
 export const SITE_SOURCE = "website";
 
